@@ -3,14 +3,17 @@ package com.ecust;
 appid = 1002;
 
 class HelloRequest{
+//这是一个单行注释
     string name;
     int16 myInt16;
     int32 myInt32;
+    /*这是一个多行注释*/
     float myFloat;
     double myDouble;
     boolean myBoolean
     Map<int16,double> myMap;
     List<int32> myList;
+    Hello2Request req;
 }
 
 class HelloResponse{
@@ -44,6 +47,7 @@ class Hello2Response{
     boolean myBoolean
     Map<int16,double> myMap;
     List<int32> myList;
+    Hello2Request req;
 }
 
 service Greeter{
