@@ -7,7 +7,8 @@
     <groupId>com.baiji</groupId>
     <artifactId>baiji-rpc</artifactId>
     <packaging>pom</packaging>
-    <version>${module.version}</version>
+    <!--    <version>${module.version}</version>-->
+    <version>1.0</version>
 
     <modules>
         <module>baiji-rpc-common</module>

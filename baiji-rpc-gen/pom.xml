@@ -15,14 +15,45 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <antlr.version>4.13.1</antlr.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.baiji</groupId>
-            <artifactId>baiji-rpc-client</artifactId>
-            <version>${module.version}</version>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+            <version>${antlr.version}</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.baiji</groupId>-->
+<!--            <artifactId>baiji-rpc-client</artifactId>-->
+<!--            <version>1.0</version>-->
+<!--        </dependency>-->
     </dependencies>
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>${antlr.version}</version>
+                <executions>
+                    <execution>
+                        <id>antlr-generate</id>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                        <configuration>
+                            <!-- 指定 ANTLR 语法文件所在目录 -->
+                            <sourceDirectory>src/main/g4</sourceDirectory>
+                            <!-- 指定生成的代码输出目录 -->
+                            <outputDirectory>src/main/java</outputDirectory>
+                            <!-- 其他可选配置，如生成监听器、访问器等 -->
+                            <listener>true</listener>
+                            <visitor>true</visitor>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
