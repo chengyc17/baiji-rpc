@@ -1,5 +1,4 @@
-package com.baiji.antlr;
-// Generated from BaijiGrammar.g4 by ANTLR 4.13.1
+package com.baiji.antlr;// Generated from BaijiGrammar.g4 by ANTLR 4.13.1
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -21,7 +20,7 @@ public class BaijiGrammarParser extends Parser {
 		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, T__15=16, T__16=17, 
 		T__17=18, T__18=19, T__19=20, T__20=21, T__21=22, SINGLE_LINE_COMMENT=23, 
 		MULTI_LINE_COMMENT=24, STRING_LITERAL=25, INTEGER_LITERAL=26, IDENTIFIER=27, 
-		WS=28;
+		PACKAGE_IDENTIFIER=28, WS=29;
 	public static final int
 		RULE_program = 0, RULE_syntaxDeclaration = 1, RULE_packageDeclaration = 2, 
 		RULE_appIdDeclaration = 3, RULE_classDeclaration = 4, RULE_fieldDeclaration = 5, 
@@ -48,7 +47,7 @@ public class BaijiGrammarParser extends Parser {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
 			null, null, null, null, null, null, null, null, null, null, null, "SINGLE_LINE_COMMENT", 
 			"MULTI_LINE_COMMENT", "STRING_LITERAL", "INTEGER_LITERAL", "IDENTIFIER", 
-			"WS"
+			"PACKAGE_IDENTIFIER", "WS"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -224,7 +223,7 @@ public class BaijiGrammarParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class PackageDeclarationContext extends ParserRuleContext {
-		public TerminalNode IDENTIFIER() { return getToken(BaijiGrammarParser.IDENTIFIER, 0); }
+		public TerminalNode PACKAGE_IDENTIFIER() { return getToken(BaijiGrammarParser.PACKAGE_IDENTIFIER, 0); }
 		public PackageDeclarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -248,7 +247,7 @@ public class BaijiGrammarParser extends Parser {
 			setState(34);
 			match(T__3);
 			setState(35);
-			match(IDENTIFIER);
+			match(PACKAGE_IDENTIFIER);
 			setState(36);
 			match(T__2);
 			}
@@ -688,7 +687,7 @@ public class BaijiGrammarParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001\u001cf\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0004\u0001\u001df\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
 		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
 		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002"+
 		"\b\u0007\b\u0001\u0000\u0001\u0000\u0001\u0000\u0001\u0000\u0005\u0000"+
@@ -718,7 +717,7 @@ public class BaijiGrammarParser extends Parser {
 		"\u0000\u0000\u0000\u001d\u001e\u0005\u0001\u0000\u0000\u001e\u001f\u0005"+
 		"\u0002\u0000\u0000\u001f \u0005\u0019\u0000\u0000 !\u0005\u0003\u0000"+
 		"\u0000!\u0003\u0001\u0000\u0000\u0000\"#\u0005\u0004\u0000\u0000#$\u0005"+
-		"\u001b\u0000\u0000$%\u0005\u0003\u0000\u0000%\u0005\u0001\u0000\u0000"+
+		"\u001c\u0000\u0000$%\u0005\u0003\u0000\u0000%\u0005\u0001\u0000\u0000"+
 		"\u0000&\'\u0005\u0005\u0000\u0000\'(\u0005\u0002\u0000\u0000()\u0005\u001a"+
 		"\u0000\u0000)*\u0005\u0003\u0000\u0000*\u0007\u0001\u0000\u0000\u0000"+
 		"+,\u0005\u0006\u0000\u0000,-\u0005\u001b\u0000\u0000-1\u0005\u0007\u0000"+

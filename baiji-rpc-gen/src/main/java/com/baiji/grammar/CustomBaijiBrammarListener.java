@@ -17,7 +17,7 @@ public class CustomBaijiBrammarListener extends BaijiGrammarBaseListener {
 
     @Override
     public void enterPackageDeclaration(BaijiGrammarParser.PackageDeclarationContext ctx) {
-        baijiGrammarDefinition.setPackageName(ctx.IDENTIFIER().getText());
+        baijiGrammarDefinition.setPackageName(ctx.PACKAGE_IDENTIFIER().getText());
     }
 
     @Override
@@ -31,7 +31,6 @@ public class CustomBaijiBrammarListener extends BaijiGrammarBaseListener {
 
         List<ClassInfoDefinition> clsInfo = new ArrayList<>();
 //        ctx.children.forEach(x->x.);
-
 
 
     }

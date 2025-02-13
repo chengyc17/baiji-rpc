@@ -4,7 +4,7 @@ grammar BaijiGrammar;
 program: syntaxDeclaration packageDeclaration appIdDeclaration classDeclaration* serviceDeclaration;
 
 syntaxDeclaration: 'syntax' '=' STRING_LITERAL ';';
-packageDeclaration: 'package' IDENTIFIER ';';
+packageDeclaration: 'package' PACKAGE_IDENTIFIER ';';
 appIdDeclaration: 'appid' '=' INTEGER_LITERAL ';';
 
 classDeclaration: 'class' IDENTIFIER '{' fieldDeclaration* '}';
@@ -31,4 +31,5 @@ MULTI_LINE_COMMENT: '/*' .*? '*/' -> skip;
 STRING_LITERAL: '"' ~'"'* '"';
 INTEGER_LITERAL: [0-9]+;
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
+PACKAGE_IDENTIFIER: IDENTIFIER ('.' IDENTIFIER)*;
 WS: [ \t\r\n]+ -> skip;
