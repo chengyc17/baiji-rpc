@@ -24,11 +24,11 @@
             <artifactId>antlr4-runtime</artifactId>
             <version>${antlr.version}</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.baiji</groupId>-->
-<!--            <artifactId>baiji-rpc-client</artifactId>-->
-<!--            <version>1.0</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.baiji</groupId>
+            <artifactId>baiji-rpc-common</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

@@ -1,5 +1,7 @@
 package com.baiji.spi;
 
+import com.baiji.common.grammar.definition.BaijiGrammarDefinition;
+
 public interface LangHandler {
     /**
      * 编程语言类型
@@ -11,7 +13,7 @@ public interface LangHandler {
      *
      * @throws Exception
      */
-    void generate() throws Exception;
+    void generate(BaijiGrammarDefinition definition) throws Exception;
 
     /**
      * 部署到不同的代码仓库

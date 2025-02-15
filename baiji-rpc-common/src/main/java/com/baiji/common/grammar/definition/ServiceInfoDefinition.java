@@ -1,4 +1,4 @@
-package com.baiji.grammar;
+package com.baiji.common.grammar.definition;
 
 import java.util.List;
 

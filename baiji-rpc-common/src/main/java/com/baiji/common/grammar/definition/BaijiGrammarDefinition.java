@@ -1,4 +1,4 @@
-package com.baiji.grammar;
+package com.baiji.common.grammar.definition;
 
 import java.util.List;
 
@@ -7,17 +7,17 @@ public class BaijiGrammarDefinition {
     private String packageName;
     private Integer appid;
 
-    private List<ClassInfoDefinition> clsInfo;
+    private List<ClassInfoDefinition> clsInfos;
     private ServiceInfoDefinition serviceInfo;
 
     public BaijiGrammarDefinition() {
     }
 
-    public BaijiGrammarDefinition(String syntax, String packageName, Integer appid, List<ClassInfoDefinition> clsInfo, ServiceInfoDefinition serviceInfo) {
+    public BaijiGrammarDefinition(String syntax, String packageName, Integer appid, List<ClassInfoDefinition> clsInfos, ServiceInfoDefinition serviceInfo) {
         this.syntax = syntax;
         this.packageName = packageName;
         this.appid = appid;
-        this.clsInfo = clsInfo;
+        this.clsInfos = clsInfos;
         this.serviceInfo = serviceInfo;
     }
 
@@ -46,11 +46,11 @@ public class BaijiGrammarDefinition {
     }
 
     public List<ClassInfoDefinition> getClsInfo() {
-        return clsInfo;
+        return clsInfos;
     }
 
     public void setClsInfo(List<ClassInfoDefinition> clsInfo) {
-        this.clsInfo = clsInfo;
+        this.clsInfos = clsInfo;
     }
 
     public ServiceInfoDefinition getServiceInfo() {

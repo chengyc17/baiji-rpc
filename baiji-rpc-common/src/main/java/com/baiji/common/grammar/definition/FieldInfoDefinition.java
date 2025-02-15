@@ -1,14 +1,14 @@
-package com.baiji.grammar;
+package com.baiji.common.grammar.definition;
 
-public class ClassInfoDefinition {
-    private String dataType;
+public class FieldInfoDefinition {
+        private String dataType;
     private String fieldName;
     private String comment;
 
-    public ClassInfoDefinition() {
+    public FieldInfoDefinition() {
     }
 
-    public ClassInfoDefinition(String dataType, String fieldName, String comment) {
+    public FieldInfoDefinition(String dataType, String fieldName, String comment) {
         this.dataType = dataType;
         this.fieldName = fieldName;
         this.comment = comment;
