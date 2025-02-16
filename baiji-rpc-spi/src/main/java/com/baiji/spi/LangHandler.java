@@ -20,5 +20,5 @@ public interface LangHandler {
      *
      * @throws Exception
      */
-    void deploy() throws Exception;
+    void deploy(String generateCodeLocation, DeployInfo deployInfo) throws Exception;
 }

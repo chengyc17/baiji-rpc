@@ -18,4 +18,24 @@ public class StringUtils {
         }
         return sb.toString();
     }
+
+    public static boolean equals(String s1, String s2) {
+        if (s1 == null && s2 == null) {
+            return true;
+        }
+        if (s1 == null || s2 == null) {
+            return false;
+        }
+        return s1.equals(s2);
+    }
+
+    public static boolean equalsIgnoreCase(String s1, String s2) {
+        if (s1 == null && s2 == null) {
+            return true;
+        }
+        if (s1 == null || s2 == null) {
+            return false;
+        }
+        return s1.equalsIgnoreCase(s2);
+    }
 }

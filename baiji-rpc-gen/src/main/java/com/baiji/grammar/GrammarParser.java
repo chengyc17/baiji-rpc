@@ -3,18 +3,23 @@ package com.baiji.grammar;
 import com.baiji.antlr.BaijiGrammarLexer;
 import com.baiji.antlr.BaijiGrammarParser;
 import com.baiji.common.grammar.definition.BaijiGrammarDefinition;
+import com.baiji.common.util.StringUtils;
+import com.baiji.spi.DeployInfo;
+import com.baiji.spi.LangHandler;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.io.IOException;
+import java.util.ServiceLoader;
 
 public class GrammarParser {
 
-    public BaijiGrammarDefinition parser(String path) throws IOException {
-        String input = CharStreams.fromFileName(path).toString();
-        BaijiGrammarLexer lexer = new BaijiGrammarLexer(CharStreams.fromString(input));
+    public BaijiGrammarDefinition parser(String content) throws IOException {
+//        String input = CharStreams.fromFileName(path).toString();
+//        BaijiGrammarLexer lexer = new BaijiGrammarLexer(CharStreams.fromString(input));
+        BaijiGrammarLexer lexer = new BaijiGrammarLexer(CharStreams.fromString(content));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         BaijiGrammarParser parser = new BaijiGrammarParser(tokens);
         ParseTree tree = parser.program();
@@ -24,13 +29,15 @@ public class GrammarParser {
         return customBaijiBrammarListener.getGrammarDefinition();
     }
 
-//    public static void main(String[] args) throws IOException {
-//        GrammarParser parser = new GrammarParser();
-//
-//        String path = GrammarParser.class.getClassLoader().getResource("contract.idl").getPath();
-//
-////        String path1 = "D:/IdeaProject/baiji-rpc/baiji-rpc-gen/target/classes/contract.idl";
-//        String path1 = "D:\\idea_projects\\baiji-rpc\\baiji-rpc-gen\\src\\main\\resources\\contract.idl";
-//        parser.parser(path1);
-//    }
+    public void codeGenerate(BaijiGrammarDefinition definition, String targetLang, String generateCodeLocation, DeployInfo deployInfo) throws Exception {
+        ServiceLoader<LangHandler> langHandlers = ServiceLoader.load(LangHandler.class);
+        for (LangHandler langHandler : langHandlers) {
+            if (!StringUtils.equalsIgnoreCase(targetLang, langHandler.language())) {
+                continue;
+            }
+            langHandler.generate(definition);
+            langHandler.deploy(generateCodeLocation, deployInfo);
+        }
+        throw new IllegalArgumentException("不支持的语言类型");
+    }
 }
