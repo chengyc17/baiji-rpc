@@ -20,7 +20,7 @@
         <dependency>
             <groupId>com.baiji</groupId>
             <artifactId>baiji-rpc-common</artifactId>
-            <version>1.0</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 

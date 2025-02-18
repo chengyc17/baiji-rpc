@@ -1,63 +1,54 @@
 package ${packageName};
 
-import java.util.Map;
-import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
+import com.baiji.client.BaiJiClient;
+import java.net.http.HttpClient;
 
-/**
-* ${className} 实体类
-*/
-public class ${className} {
-    <#list fields as field>
-        private ${field.type} ${field.name};
-    </#list>
+public class ${serviceName}Impl implements ${serviceName} {
+    private static volatile ${serviceName}Impl instance;
 
-    <#list fields as field>
-        /**
-        * 获取 ${field.name}
-        * @return ${field.name}
-        */
-        public ${field.type} get${field.name?cap_first}() {
-        return ${field.name};
+    private volatile Integer connectTimeout = 1000;
+    private volatile Integer requestTimeout = 1000;
+
+    private volatile ThreadPoolExecutor threadPoolExecutor;
+
+    private HttpClient client = BaiJiClient.getInstance(connectTimeout)
+
+    public void setConnectTimeout(Integer connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    public void setRequestTimeout(Integer requestTimeout) {
+        this.requestTimeout = requestTimeout;
+    }
+
+    public void setThreadPoolExecutor(ThreadPoolExecutor threadPoolExecutor) {
+        this.threadPoolExecutor = threadPoolExecutor;
+    }
+
+    public static final ${serviceName}Impl getInstance() {
+        if (instance == null) {
+            synchronized (${serviceName}Impl.class) {
+                if (instance == null) {
+                    instance = new ${serviceName}Impl();
+                }
+            }
         }
-
-        /**
-        * 设置 ${field.name}
-        * @param ${field.name} ${field.name}
-        */
-        public void set${field.name?cap_first}(${field.type} ${field.name}) {
-        this.${field.name} = ${field.name};
-        }
-    </#list>
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ${className} that = (${className}) o;
-        <#list fields as field>
-            return Objects.equals(${field.name}, that.${field.name})<#if field_has_next>
-            &&<#else>;
-        </#if>
-        </#list>
+        return instance;
     }
 
-    @Override
-    public int hashCode() {
-        <#if fields?size == 1>
-            return Objects.hash(${fields[0].name});
-        <#else>
-            return Objects.hash(<#list fields as field>${field.name}<#if field_has_next>, </#if></#list>);
-        </#if>
-    }
+<#list serviceMethods as method>
 
     @Override
-    public String toString() {
-        return "${className}{" +
-        <#list fields as field>
-            "${field.name}=" + ${field.name} +<#if field_has_next>
-            ", " +<#else>
-            '}';
-        </#if>
-        </#list>
+    public ${method.responseType} ${method.name}(${method.requestType} request)  throw Exception {
+
     }
+
+    public CompletableFuture<${method.responseType}> ${method.name}Aysnc(${method.requestType} request)  throw Exception {
+        return threadPoolExecutor == null ?
+            CompletableFuture.supplyAsync(() -> ${method.name}(request)) :
+                CompletableFuture.supplyAsync(() -> ${method.name}(request), threadPoolExecutor);
+    }
+</#list>
 }

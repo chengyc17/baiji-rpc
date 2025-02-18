@@ -1,18 +1,40 @@
 package com.baiji.common.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class JsonUtils {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     static {
-        // 配置 ObjectMapper
-        // 忽略在 JSON 中存在但 Java 对象中不存在的属性
+        objectMapper.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        // 允许序列化空对象
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
     }
 
-    public static String toJson() {
+    public static String serialize(Object object) {
+        try {
+            return objectMapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("serialize error", e);
+        }
+    }
 
+    public static <T> T deserialize(String json, Class<T> clazz) {
+        try {
+            return objectMapper.readValue(json, clazz);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("deserialize error", e);
+        }
+    }
+
+    public static <T> T deserialize(String json, TypeReference<T> tTypeReference) {
+        try {
+            return objectMapper.readValue(json, tTypeReference);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("deserialize error", e);
+        }
     }
 }

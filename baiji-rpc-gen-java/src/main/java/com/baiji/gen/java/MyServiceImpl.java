@@ -1,15 +1,23 @@
-package ${packageName};
+package com.baiji.gen.java;
 
-import java.util.concurrent.CompletableFuture;
+import com.baiji.client.BaiJiClient;
+
+import java.net.http.HttpClient;
 import java.util.concurrent.ThreadPoolExecutor;
 
-public class ${serviceName}Impl implements ${serviceName} {
-    private static volatile ${serviceName}Impl instance;
+public class MyServiceImpl {
+    private static volatile MyServiceImpl instance;
 
     private volatile Integer connectTimeout = 1000;
     private volatile Integer requestTimeout = 1000;
 
     private volatile ThreadPoolExecutor threadPoolExecutor;
+
+    private BaiJiClient client = BaiJiClient.getInstance(connectTimeout);
+
+    private MyServiceImpl(Integer connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
 
     public void setConnectTimeout(Integer connectTimeout) {
         this.connectTimeout = connectTimeout;
@@ -23,28 +31,32 @@ public class ${serviceName}Impl implements ${serviceName} {
         this.threadPoolExecutor = threadPoolExecutor;
     }
 
-    public static final ${serviceName}Impl getInstance() {
+    private MyServiceImpl(){}
+
+    private MyServiceImpl(){
+
+    }
+
+    public static final MyServiceImpl getInstance() {
         if (instance == null) {
-            synchronized (${serviceName}Impl.class) {
+            synchronized (MyServiceImpl.class) {
                 if (instance == null) {
-                    instance = new ${serviceName}Impl();
+                    instance = new MyServiceImpl();
                 }
             }
         }
         return instance;
     }
 
-    <#list serviceMethods as method>
 
-    @Override
-    public ${method.responseType} ${method.name}(${method.requestType} request)  throw Exception {
-
-    }
-
-    public CompletableFuture<${method.responseType}> ${method.name}Aysnc(${method.requestType} request)  throw Exception {
-        return threadPoolExecutor == null ?
-                CompletableFuture.supplyAsync(() -> ${method.name}(request)) :
-                CompletableFuture.supplyAsync(() -> ${method.name}(request), threadPoolExecutor);
-    }
-    </#list>
+//    @Override
+//    public ${method.responseType} ${method.name}(${method.requestType} request)  throw Exception {
+//
+//    }
+//
+//    public CompletableFuture<${method.responseType}> ${method.name}Aysnc(${method.requestType} request)  throw Exception {
+//        return threadPoolExecutor == null ?
+//                CompletableFuture.supplyAsync(() -> ${method.name}(request)) :
+//        CompletableFuture.supplyAsync(() -> ${method.name}(request), threadPoolExecutor);
+//    }
 }
