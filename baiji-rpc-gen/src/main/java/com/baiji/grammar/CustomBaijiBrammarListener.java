@@ -2,6 +2,7 @@ package com.baiji.grammar;
 
 import com.baiji.antlr.BaijiGrammarBaseListener;
 import com.baiji.antlr.BaijiGrammarParser;
+import com.baiji.common.dtype.BaijiIDLDataType;
 import com.baiji.common.grammar.definition.*;
 import com.baiji.common.util.StringUtils;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -9,6 +10,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class CustomBaijiBrammarListener extends BaijiGrammarBaseListener {
 
@@ -42,7 +44,15 @@ public class CustomBaijiBrammarListener extends BaijiGrammarBaseListener {
         List<FieldInfoDefinition> fields = new ArrayList<>();
         for (BaijiGrammarParser.FieldDeclarationContext fieldCtx : ctx.fieldDeclaration()) {
             FieldInfoDefinition fieldInfo = new FieldInfoDefinition();
-            fieldInfo.setDataType(fieldCtx.type().getText());
+            String type = fieldCtx.type().getText();
+            if (StringUtils.startsWithIgnoreCase(type, BaijiIDLDataType.Baiji_Map) || StringUtils.startsWithIgnoreCase(type, BaijiIDLDataType.Baiji_List)) {
+                fieldInfo.setDataType(StringUtils.startsWithIgnoreCase(type, BaijiIDLDataType.Baiji_Map) ? BaijiIDLDataType.Baiji_Map : BaijiIDLDataType.Baiji_List);
+                List<BaijiGrammarParser.TypeContext> type1 = fieldCtx.type().type();
+                fieldInfo.setGenerics(type1.stream().map(x -> x.getText()).collect(Collectors.toList()));
+            } else {
+                fieldInfo.setDataType(type);
+
+            }
             fieldInfo.setFieldName(fieldCtx.IDENTIFIER().getText());
             fieldInfo.setComment(StringUtils.join(StringUtils.Empty,
                     Optional.ofNullable(fieldCtx.SINGLE_LINE_COMMENT()).map(ParseTree::getText).orElse(StringUtils.Empty),

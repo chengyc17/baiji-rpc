@@ -16,6 +16,7 @@ import java.util.ServiceLoader;
 
 public class GrammarParser {
 
+
     public BaijiGrammarDefinition parser(String content) throws IOException {
 //        String input = CharStreams.fromFileName(path).toString();
 //        BaijiGrammarLexer lexer = new BaijiGrammarLexer(CharStreams.fromString(input));
@@ -39,5 +40,10 @@ public class GrammarParser {
             langHandler.deploy(generateCodeLocation, deployInfo);
         }
         throw new IllegalArgumentException("不支持的语言类型");
+    }
+
+    public void codeGenerate(String content, String targetLang, String generateCodeLocation, DeployInfo deployInfo) throws Exception {
+        BaijiGrammarDefinition parser = parser(content);
+        codeGenerate(parser, targetLang, generateCodeLocation, deployInfo);
     }
 }

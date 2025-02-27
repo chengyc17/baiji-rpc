@@ -42,4 +42,11 @@ public class StringUtils {
     public static boolean isBlank(String s) {
         return s == null ? true : "".equals(s.trim());
     }
+
+    public static boolean startsWithIgnoreCase(String target, String prefix) {
+        if (target == null || prefix == null) {
+            return false;
+        }
+        return target.toLowerCase().startsWith(prefix.toLowerCase());
+    }
 }
