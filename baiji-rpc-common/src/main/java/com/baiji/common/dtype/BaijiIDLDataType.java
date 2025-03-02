@@ -9,5 +9,4 @@ public interface BaijiIDLDataType {
     String Baiji_Boolean = "boolean";
     String Baiji_Map = "Map";
     String Baiji_List = "List";
-    Short
 }

@@ -5,9 +5,9 @@ import com.baiji.common.dtype.BaijiIDLDataType;
 import java.util.HashMap;
 import java.util.Map;
 
-public interface BaijiJavaDataTypeMap {
+public class BaijiJavaDataTypeMap {
 
-    Map<String, String> D_MAP = new HashMap<>() {{
+    private static Map<String, String> D_MAP = new HashMap<>() {{
         put(BaijiIDLDataType.Baiji_String, "String");
         put(BaijiIDLDataType.Baiji_Int16, "Short");
         put(BaijiIDLDataType.Baiji_Int32, "Integer");
@@ -17,4 +17,13 @@ public interface BaijiJavaDataTypeMap {
         put(BaijiIDLDataType.Baiji_Map, "Map");
         put(BaijiIDLDataType.Baiji_List, "List");
     }};
+
+    public static String getMapType(String baijiType) {
+        if (D_MAP.containsKey(baijiType)) {
+            return D_MAP.get(baijiType);
+        }
+        return baijiType;
+        //throw new IllegalArgumentException("Undefined Type");
+    }
+
 }

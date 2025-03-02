@@ -32,14 +32,18 @@ public class GrammarParser {
 
     public void codeGenerate(BaijiGrammarDefinition definition, String targetLang, String generateCodeLocation, DeployInfo deployInfo) throws Exception {
         ServiceLoader<LangHandler> langHandlers = ServiceLoader.load(LangHandler.class);
+        boolean support = false;
         for (LangHandler langHandler : langHandlers) {
             if (!StringUtils.equalsIgnoreCase(targetLang, langHandler.language())) {
                 continue;
             }
+            support = true;
             langHandler.generate(definition);
             langHandler.deploy(generateCodeLocation, deployInfo);
         }
-        throw new IllegalArgumentException("不支持的语言类型");
+        if (!support) {
+            throw new IllegalArgumentException("不支持的语言类型");
+        }
     }
 
     public void codeGenerate(String content, String targetLang, String generateCodeLocation, DeployInfo deployInfo) throws Exception {

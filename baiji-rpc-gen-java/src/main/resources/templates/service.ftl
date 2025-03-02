@@ -33,25 +33,27 @@ public class ${serviceName}Client {
         return new ${serviceName}Client(builder);
     }
 
-    public ${method.responseType} ${method.name}(${method.requestType} request)  throw Exception {
-        client.doInvoke(${appid},${method.name},request,requestTimeout);
+<#list methods as method>
+    public ${method.resType} ${method.methodName}(${method.reqType} request)  throw Exception {
+        client.doInvoke(${appid},${method.methodName},request,requestTimeout);
     }
 
-    public ${method.responseType} ${method.name}(${method.requestType} request, int requestTimeout)  throw Exception {
-        client.doInvoke(${appid},${method.name},request,requestTimeout);
+    public ${method.resType} ${method.methodName}(${method.reqType} request, int requestTimeout)  throw Exception {
+        client.doInvoke(${appid},${method.methodName},request,requestTimeout);
     }
 
-    public CompletableFuture<${method.responseType}> ${method.name}Aysnc(${method.requestType} request)  throw Exception {
+    public CompletableFuture<${method.resType}> ${method.methodName}Aysnc(${method.reqType} request)  throw Exception {
         return threadPoolExecutor == null ?
-            CompletableFuture.supplyAsync(() -> ${method.name}(request)) :
-            CompletableFuture.supplyAsync(() -> ${method.name}(request), threadPoolExecutor);
+            CompletableFuture.supplyAsync(() -> ${method.methodName}(request)) :
+            CompletableFuture.supplyAsync(() -> ${method.methodName}(request), threadPoolExecutor);
     }
 
-    public CompletableFuture<${method.responseType}> ${method.name}Aysnc(${method.requestType} request, ThreadPoolExecutor threadPoolExecutor)  throw Exception {
+    public CompletableFuture<${method.resType}> ${method.methodName}Aysnc(${method.reqType} request, ThreadPoolExecutor threadPoolExecutor)  throw Exception {
         return threadPoolExecutor == null ?
-            CompletableFuture.supplyAsync(() -> ${method.name}(request)) :
-            CompletableFuture.supplyAsync(() -> ${method.name}(request), threadPoolExecutor);
+            CompletableFuture.supplyAsync(() -> ${method.methodName}(request)) :
+            CompletableFuture.supplyAsync(() -> ${method.methodName}(request), threadPoolExecutor);
     }
+</#list>
 }
 
 interface Builder {
