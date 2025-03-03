@@ -10,6 +10,9 @@ import com.baiji.spi.LangHandler;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import org.apache.maven.cli.MavenCli;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -30,7 +33,7 @@ public class JavaCodeGen implements LangHandler {
     private final static String SERVICE_TEMPLATE_PATH = "service.ftl";
 
     private final static String BASE_PATH = System.getProperty("user.dir");
-    private final static String GENERATE_SOURCE_PATH_NAME = BASE_PATH + File.separator + "generate_source/";
+    private final static String GENERATE_SOURCE_PATH_NAME = BASE_PATH + File.separator + "generate_source/src/main/java/";
 
     @Override
     public String language() {
@@ -41,7 +44,7 @@ public class JavaCodeGen implements LangHandler {
     public void generate(BaijiGrammarDefinition definition) throws Exception {
         Path generatesourcepath = Paths.get(GENERATE_SOURCE_PATH_NAME);
         if (!Files.exists(generatesourcepath)) {
-            Files.createDirectory(generatesourcepath);
+            Files.createDirectories(generatesourcepath);
         }
         String packagePath = definition.getPackageName().replace(".", File.separator) + File.separator;
         //最终java文件生成的位置
@@ -52,12 +55,158 @@ public class JavaCodeGen implements LangHandler {
         interfaceGenerator(definition, targetRootLocation, FreeMarkerConfig.getConfig());
         dtoGenerator(definition, targetRootLocation, FreeMarkerConfig.getConfig());
         serviceGenerator(definition, targetRootLocation, FreeMarkerConfig.getConfig());
+
+        generatePOM();
+//        deploy(null, null);
     }
 
     @Override
     public void deploy(String generateCodeLocation, DeployInfo deployInfo) throws Exception {
 
     }
+
+    public static File generatePomFile() throws Exception {
+        // 1. 创建 Maven 项目模型
+        Model model = new Model();
+        model.setModelVersion("4.0.0");
+        model.setGroupId("com.example");
+        model.setArtifactId("my-artifact");
+        model.setVersion("1.0.0");
+
+        // 2. 将模型写入 pom.xml
+        File pomFile = new File("pom.xml");
+        try (FileWriter writer = new FileWriter(pomFile)) {
+            MavenXpp3Writer pomWriter = new MavenXpp3Writer();
+            pomWriter.write(writer, model);
+        }
+
+        System.out.println("pom.xml generated successfully at: " + pomFile.getAbsolutePath());
+        return pomFile;
+    }
+
+    /**
+     * 使用 MavenEmbedder 发布项目
+     */
+    private static void deployToMavenRepository(File pomFile) throws Exception {
+        // 1. 初始化 MavenCli
+        MavenCli cli = new MavenCli();
+        System.setProperty("maven.multiModuleProjectDirectory", new File(".").getAbsolutePath());
+
+        // 2. 动态设置仓库地址和认证信息
+        String repositoryUrl = "http://localhost:8081/repository/maven-releases/";
+        String repositoryId = "nexus-releases";
+        String username = "admin";
+        String password = "admin123";
+
+        // 3. 执行 Maven deploy 命令，动态传递仓库地址和认证信息
+        System.out.println("Deploying project to Maven repository...");
+        int result = cli.doMain(
+                new String[]{
+                        "deploy",
+                        "-DaltDeploymentRepository=" + repositoryId + "::default::" + repositoryUrl,
+                        "-DrepositoryId=" + repositoryId,
+                        "-DrepositoryUsername=" + username,
+                        "-DrepositoryPassword=" + password
+                },
+                ".", System.out, System.err
+        );
+
+        // 4. 检查执行结果
+        if (result != 0) {
+            throw new RuntimeException("Maven deploy failed!");
+        }
+        System.out.println("Deploy completed successfully!");
+    }
+
+    private void generatePOM() {
+
+
+//        Model model = new Model();
+//        model.setModelVersion("4.0.0");
+//        model.setGroupId("com.example");
+//        model.setArtifactId("my-artifact");
+//        model.setVersion("1.0.0");
+//        // 写入 pom.xml 文件
+//        try (FileWriter writer = new FileWriter(new File(BASE_PATH + File.separator + "generate_source/pom.xml"))) {
+//            MavenXpp3Writer pomWriter = new MavenXpp3Writer();
+//            pomWriter.write(writer, model);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        MavenExecutionRequest request = new DefaultMavenExecutionRequest();
+//        request.setPom(new File(""));
+//        request.setGoals(List.of("deploy"));
+//
+//        Settings settings = new Settings();
+//        Server server = new Server();
+//        server.setId("my-repo");
+//        server.setUsername("admin");
+//        server.setPassword("yc19930117");
+//        settings.addServer(server);
+//
+////        List<RemoteRepository> remoteRepositories = new ArrayList<>();
+//        List<RemoteRepository> remoteRepositories = new ArrayList<>();
+//        RemoteRepository repo = new RemoteRepository.Builder("my-repo", "default", "http://your-repo-url/repository/maven-releases/").build();
+//        remoteRepositories.add(repo);
+//        request.setRemoteRepositories(remoteRepositories);
+////        request.setRemoteRepositories(remoteRepositories);
+//
+//        // 创建 RepositorySystem
+//        RepositorySystem system = newRepositorySystem();
+//        RepositorySystemSession session = newSession(system, settings);
+//        request.setRepositorySession(session);
+//
+//
+//        // 创建 ModelBuilder
+//        ModelBuilder modelBuilder = new DefaultModelBuilderFactory().newInstance();
+//        ModelBuildingRequest modelBuildingRequest = new DefaultModelBuildingRequest();
+//        modelBuildingRequest.setPomFile(request.getPom());
+//        modelBuildingRequest.setRepositorySession(session);
+//        modelBuildingRequest.setModelResolver(new ModelResolver() {
+//            @Override
+//            public void addRemoteRepository(RemoteRepository repository) {
+//                // 可根据需要实现
+//            }
+//
+//            @Override
+//            public org.apache.maven.model.Model resolveModel(String groupId, String artifactId, String version) throws org.apache.maven.model.resolution.UnresolvableModelException {
+//                // 可根据需要实现
+//                return null;
+//            }
+//
+//            @Override
+//            public ModelResolver newCopy() {
+//                // 可根据需要实现
+//                return null;
+//            }
+//        });
+//        request.setModelBuildingRequest(modelBuildingRequest);
+//
+//        // 执行 Maven 命令
+//        MavenCli cli = new MavenCli();
+//        MavenExecutionResult result = cli.doMain(request);
+//        if (result.hasExceptions()) {
+//            result.getExceptions().forEach(Throwable::printStackTrace);
+//        } else {
+//            System.out.println("Deployment successful.");
+//        }
+    }
+
+//    private static RepositorySystem newRepositorySystem() {
+//        DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
+//        locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
+//        locator.addService(TransporterFactory.class, FileTransporterFactory.class);
+//        locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
+//        return locator.getService(RepositorySystem.class);
+//    }
+//
+//    private static RepositorySystemSession newSession(RepositorySystem system, Settings settings) {
+//        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
+//        LocalRepository localRepo = new LocalRepository("~/.m2/repository");
+//        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
+//        return session;
+//    }
 
     private void serviceGenerator(BaijiGrammarDefinition definition, File targetRootLocation, Configuration cfg) {
         try {

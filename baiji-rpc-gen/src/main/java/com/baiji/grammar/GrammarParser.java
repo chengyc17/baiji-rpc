@@ -23,6 +23,8 @@ public class GrammarParser {
         BaijiGrammarLexer lexer = new BaijiGrammarLexer(CharStreams.fromString(content));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         BaijiGrammarParser parser = new BaijiGrammarParser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(new CustomParserErrorListener());
         ParseTree tree = parser.program();
         ParseTreeWalker walker = new ParseTreeWalker();
         CustomBaijiBrammarListener customBaijiBrammarListener = new CustomBaijiBrammarListener();
