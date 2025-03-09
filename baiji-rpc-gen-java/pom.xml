@@ -35,7 +35,7 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-embedder</artifactId>
-            <version>3.8.6</version>
+            <version>3.8.6</version> <!-- 使用最新版本 -->
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -44,39 +44,83 @@
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
-            <artifactId>maven-model</artifactId>
-            <version>3.8.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-settings</artifactId>
-            <version>3.8.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-plugin-api</artifactId>
+            <artifactId>maven-compat</artifactId>
             <version>3.8.6</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.resolver</groupId>
-            <artifactId>maven-resolver-api</artifactId>
+            <artifactId>maven-resolver-connector-basic</artifactId>
             <version>1.7.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.resolver</groupId>
-            <artifactId>maven-resolver-impl</artifactId>
+            <artifactId>maven-resolver-transport-http</artifactId>
             <version>1.7.3</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.36</version>
+            <groupId>org.apache.maven.wagon</groupId>
+            <artifactId>wagon-http</artifactId>
+            <version>3.5.3</version> <!-- 使用最新版本 -->
         </dependency>
+        <dependency>
+            <groupId>org.apache.maven.wagon</groupId>
+            <artifactId>wagon-provider-api</artifactId>
+            <version>3.5.3</version> <!-- 使用最新版本 -->
+        </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
+
+
+<!--    <build>-->
+<!--        <extensions>-->
+<!--            <extension>-->
+<!--                <groupId>org.apache.maven.wagon</groupId>-->
+<!--                <artifactId>wagon-ssh</artifactId>-->
+<!--                <version>3.5.3</version>-->
+<!--            </extension>-->
+
+<!--            <extension>-->
+<!--                <groupId>org.apache.maven.wagon</groupId>-->
+<!--                <artifactId>wagon-http</artifactId>-->
+<!--                <version>3.5.3</version>-->
+<!--            </extension>-->
+<!--        </extensions>-->
+<!--    </build>-->
+    <!--        <plugins>-->
+    <!--            <plugin>-->
+    <!--                <groupId>org.codehaus.mojo</groupId>-->
+    <!--                <artifactId>wagon-maven-plugin</artifactId>-->
+    <!--                <version>1.0</version>-->
+    <!--                <configuration>-->
+    <!--                    &lt;!&ndash; serverId即在settings.xml中配置的service的id &ndash;&gt;-->
+    <!--                    <serverId>linux-server-dev</serverId>-->
+    <!--                    &lt;!&ndash; 要上传到服务器的文件，一般来说是jar或者war包 &ndash;&gt;-->
+    <!--                    <fromFile>target/project_name.jar</fromFile>-->
+    <!--                    &lt;!&ndash; 配置服务器的地址以及文件上传的目录。 &ndash;&gt;-->
+    <!--                    &lt;!&ndash; 如果2.1 serverId配置省略了，可以这么写：-->
+    <!--                    scp://user:password@192.168.1.1/home/project_name/	&ndash;&gt;-->
+    <!--                    &lt;!&ndash; 注意上传的路径中不能带有横杠'-'，例如/home/project-name ，否则会导致无法执行远程shell命令 &ndash;&gt;-->
+    <!--&lt;!&ndash;                    <url>scp://192.168.1.1/home/project_name/</url>&ndash;&gt;-->
+    <!--                </configuration>-->
+    <!--            </plugin>-->
+    <!--        </plugins>-->
+    <!--    </build>-->
+
+    <distributionManagement>
+        <repository>
+            <id>maven-releases</id> <!-- 私服的 ID -->
+            <url>http://127.0.0.1:8081/repository/maven-releases/</url> <!-- 私服的发布仓库地址 -->
+        </repository>
+        <snapshotRepository>
+            <id>maven-snapshots</id> <!-- 快照仓库的 ID -->
+            <url>http://127.0.0.1:8081/repository/maven-snapshots/</url> <!-- 私服的快照仓库地址 -->
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
+    <localRepository>D:\java\maven\maven_repository</localRepository>
+    <servers>
+        <server>
+            <id>maven-releases</id> <!-- 必须与 pom.xml 中的 repository id 一致 -->
+            <username>admin</username> <!-- 私服的用户名 -->
+            <password>yc19930117</password> <!-- 私服的密码 -->
+        </server>
+        <server>
+            <id>maven-snapshots</id> <!-- 必须与 pom.xml 中的 repository id 一致 -->
+            <username>admin</username> <!-- 私服的用户名 -->
+            <password>yc19930117</password> <!-- 私服的密码 -->
+        </server>
+    </servers>
+    <mirrors>
+        <mirror>
+            <id>aliyunmaven</id>
+            <mirrorOf>*</mirrorOf>
+            <name>阿里云公共仓库</name>
+            <url>https://maven.aliyun.com/repository/public</url>
+        </mirror>
+    </mirrors>
+    <profiles>
+        <profile>
+            <id>jdk-11</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <jdk>11</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.source>11</maven.compiler.source>
+                <maven.compiler.target>11</maven.compiler.target>
+                <maven.compiler.compilerVersion>11</maven.compiler.compilerVersion>
+            </properties>
+        </profile>
+    </profiles>
+</settings>

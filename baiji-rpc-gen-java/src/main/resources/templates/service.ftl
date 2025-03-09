@@ -34,21 +34,21 @@ public class ${serviceName}Client {
     }
 
 <#list methods as method>
-    public ${method.resType} ${method.methodName}(${method.reqType} request)  throw Exception {
+    public ${method.resType} ${method.methodName}(${method.reqType} request)  throws Exception {
         client.doInvoke(${appid},${method.methodName},request,requestTimeout);
     }
 
-    public ${method.resType} ${method.methodName}(${method.reqType} request, int requestTimeout)  throw Exception {
+    public ${method.resType} ${method.methodName}(${method.reqType} request, int requestTimeout)  throws Exception {
         client.doInvoke(${appid},${method.methodName},request,requestTimeout);
     }
 
-    public CompletableFuture<${method.resType}> ${method.methodName}Aysnc(${method.reqType} request)  throw Exception {
+    public CompletableFuture<${method.resType}> ${method.methodName}Aysnc(${method.reqType} request)  throws Exception {
         return threadPoolExecutor == null ?
             CompletableFuture.supplyAsync(() -> ${method.methodName}(request)) :
             CompletableFuture.supplyAsync(() -> ${method.methodName}(request), threadPoolExecutor);
     }
 
-    public CompletableFuture<${method.resType}> ${method.methodName}Aysnc(${method.reqType} request, ThreadPoolExecutor threadPoolExecutor)  throw Exception {
+    public CompletableFuture<${method.resType}> ${method.methodName}Aysnc(${method.reqType} request, ThreadPoolExecutor threadPoolExecutor)  throwsssssssssss Exception {
         return threadPoolExecutor == null ?
             CompletableFuture.supplyAsync(() -> ${method.methodName}(request)) :
             CompletableFuture.supplyAsync(() -> ${method.methodName}(request), threadPoolExecutor);

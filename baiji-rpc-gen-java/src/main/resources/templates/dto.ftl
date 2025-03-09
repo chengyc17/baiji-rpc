@@ -2,6 +2,7 @@ package ${packageName};
 
 import java.util.Map;
 import java.util.List;
+import java.util.Objects;
 
 /**
 * ${className} 实体类
@@ -34,8 +35,9 @@ public class ${className} {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ${className} that = (${className}) o;
+        return
         <#list fields as field>
-            return Objects.equals(${field.fieldName}, that.${field.fieldName})<#if field_has_next>
+            Objects.equals(${field.fieldName}, that.${field.fieldName})<#if field_has_next>
             &&<#else>;
         </#if>
         </#list>
@@ -56,8 +58,9 @@ public class ${className} {
         <#list fields as field>
             "${field.fieldName}=" + ${field.fieldName} +<#if field_has_next>
             ", " +<#else>
-            '}';
+            '}'
         </#if>
         </#list>
+        ;
     }
 }

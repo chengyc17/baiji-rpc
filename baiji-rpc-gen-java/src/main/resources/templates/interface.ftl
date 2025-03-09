@@ -8,6 +8,6 @@ public interface ${serviceName} {
         * @param request the ${method.reqType} request object.
         * @return the ${method.resType} response object.
         */
-        ${method.resType} ${method.methodName}(${method.reqType} request) throw Exception;
+        ${method.resType} ${method.methodName}(${method.reqType} request) throws Exception;
     </#list>
 }

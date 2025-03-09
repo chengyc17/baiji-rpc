@@ -49,4 +49,14 @@ public class StringUtils {
         }
         return target.toLowerCase().startsWith(prefix.toLowerCase());
     }
+
+    public static boolean endsWithIgnoreCase(String str, String suffix) {
+        if (str == null || suffix == null) {
+            return false;
+        }
+        if (str.length() < suffix.length()) {
+            return false;
+        }
+        return str.toLowerCase().endsWith(suffix.toLowerCase());
+    }
 }
