@@ -2,6 +2,7 @@ package com.baiji.ecust;
 
 import java.util.Map;
 import java.util.List;
+import java.util.Objects;
 
 /**
 * HelloRequest 实体类

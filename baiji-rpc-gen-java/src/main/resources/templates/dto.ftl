@@ -1,3 +1,4 @@
+<#setting number_format="0">
 package ${packageName};
 
 import java.util.Map;

@@ -1,3 +1,9 @@
+<#setting number_format="0">
+
+<#function addQuotes text>
+    <#return '"' + text + '"'>
+</#function>
+
 package ${packageName};
 
 import com.baiji.client.BaiJiClient;
@@ -35,23 +41,23 @@ public class ${serviceName}Client {
 
 <#list methods as method>
     public ${method.resType} ${method.methodName}(${method.reqType} request)  throws Exception {
-        client.doInvoke(${appid},${method.methodName},request,requestTimeout);
+        client.doInvoke(${appid},${addQuotes(method.methodName)}),request,requestTimeout);
     }
 
     public ${method.resType} ${method.methodName}(${method.reqType} request, int requestTimeout)  throws Exception {
-        client.doInvoke(${appid},${method.methodName},request,requestTimeout);
+        client.doInvoke(${appid},${addQuotes(method.methodName)},request,requestTimeout);
     }
 
-    public CompletableFuture<${method.resType}> ${method.methodName}Aysnc(${method.reqType} request)  throws Exception {
+    public CompletableFuture<${method.resType}> ${method.methodName}Async(${method.reqType} request)  throws Exception {
         return threadPoolExecutor == null ?
-            CompletableFuture.supplyAsync(() -> ${method.methodName}(request)) :
-            CompletableFuture.supplyAsync(() -> ${method.methodName}(request), threadPoolExecutor);
+            CompletableFuture.supplyAsync(() -> client.doInvoke(${appid},${addQuotes(method.methodName)},request,requestTimeout)) :
+            CompletableFuture.supplyAsync(() -> client.doInvoke(${appid},${addQuotes(method.methodName)},request,requestTimeout), threadPoolExecutor);
     }
 
-    public CompletableFuture<${method.resType}> ${method.methodName}Aysnc(${method.reqType} request, ThreadPoolExecutor threadPoolExecutor)  throwsssssssssss Exception {
+    public CompletableFuture<${method.resType}> ${method.methodName}Async(${method.reqType} request, ThreadPoolExecutor threadPoolExecutor)  throws Exception {
         return threadPoolExecutor == null ?
-            CompletableFuture.supplyAsync(() -> ${method.methodName}(request)) :
-            CompletableFuture.supplyAsync(() -> ${method.methodName}(request), threadPoolExecutor);
+            CompletableFuture.supplyAsync(() -> client.doInvoke(${appid},${addQuotes(method.methodName)},request,requestTimeout)) :
+            CompletableFuture.supplyAsync(() -> client.doInvoke(${appid},${addQuotes(method.methodName)},request,requestTimeout), threadPoolExecutor);
     }
 </#list>
 }

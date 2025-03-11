@@ -1,48 +1,108 @@
 package com.baiji.client;
 
-import com.baiji.common.util.JsonUtils;
-import com.fasterxml.jackson.core.type.TypeReference;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import okhttp3.ConnectionPool;
+import okhttp3.OkHttpClient;
+
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 public class BaiJiClient {
+    private static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(10);
+    private static final Duration DEFAULT_KEEPALIVEDURATION = Duration.ofMinutes(3);
+    public Duration connectTimeout;
+    public Duration readTimeout;
+    public Duration writeTimeout;
+    //最大连接数
+    public Integer maxIdleConnections;
+    //空闲连接存活时间
+    public Duration keepAliveDuration;
+    private ConnectionPool connectionPool;
+    private OkHttpClient client;
 
-    private static HttpClient client = null;
 
-    private static volatile BaiJiClient instance;
+    private BaiJiClient(Builder builder) {
+        this.connectTimeout = builder.connectTimeout == null ? DEFAULT_TIMEOUT : builder.connectTimeout;
+        this.readTimeout = builder.readTimeout == null ? DEFAULT_TIMEOUT : builder.readTimeout;
+        this.writeTimeout = builder.writeTimeout == null ? DEFAULT_TIMEOUT : builder.writeTimeout;
+        this.maxIdleConnections = builder.maxIdleConnections == null ? Runtime.getRuntime().availableProcessors() * 2 : builder.maxIdleConnections;
+        this.keepAliveDuration = builder.keepAliveDuration == null ? DEFAULT_KEEPALIVEDURATION : builder.keepAliveDuration;
 
-    private BaiJiClient() {
-    }
+        connectionPool = new ConnectionPool(maxIdleConnections, keepAliveDuration.toMillis(), TimeUnit.MILLISECONDS);
 
-    private BaiJiClient(Integer connectTimeout) {
-        client = HttpClient.newBuilder().connectTimeout(Duration.ofMillis(connectTimeout)).version(HttpClient.Version.HTTP_2).build();
-    }
-
-    public static final BaiJiClient getInstance(Integer connectTimeout) {
-        if (instance == null) {
-            synchronized (BaiJiClient.client) {
-                if (instance == null) {
-                    instance = new BaiJiClient(connectTimeout);
-                }
-            }
-        }
-        return instance;
-    }
-
-    public <Res, Req> Res doInvoke(String appid, String method, Req req, Integer requestTimeout) throws IOException, InterruptedException {
-        HttpRequest build = HttpRequest.newBuilder()
-                .uri(URI.create(appid))
-                .header("Content-Type", "application/json")
-                .timeout(Duration.ofMillis(requestTimeout))
-                .POST(HttpRequest.BodyPublishers.ofString(JsonUtils.serialize(req)))
+        client = new OkHttpClient.Builder()
+                .connectTimeout(connectTimeout.toMillis(), TimeUnit.MILLISECONDS)
+                .readTimeout(readTimeout.toMillis(), TimeUnit.MILLISECONDS)
+                .writeTimeout(writeTimeout.toMillis(), TimeUnit.MILLISECONDS)
+                .connectionPool(connectionPool)
                 .build();
-        HttpResponse<String> response = client.send(build, HttpResponse.BodyHandlers.ofString());
-        return JsonUtils.deserialize(response.body(), new TypeReference<Res>() {
-        });
+    }
+
+    public <Res, Req> Res doInvoke(Integer appid, String methodName, Req request) {
+        client.newCall()
+
+    }
+
+    public Duration getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public Duration getReadTimeout() {
+        return readTimeout;
+    }
+
+    public Duration getWriteTimeout() {
+        return writeTimeout;
+    }
+
+    public Integer getMaxIdleConnections() {
+        return maxIdleConnections;
+    }
+
+    public Duration getKeepAliveDuration() {
+        return keepAliveDuration;
+    }
+
+    public static class Builder {
+        private Duration connectTimeout;
+        private Duration readTimeout;
+        private Duration writeTimeout;
+        private Integer maxIdleConnections;
+        private Duration keepAliveDuration;
+
+        // 设置连接超时时间
+        public Builder connectTimeout(Duration connectTimeout) {
+            this.connectTimeout = connectTimeout;
+            return this;
+        }
+
+        // 设置读取超时时间
+        public Builder readTimeout(Duration readTimeout) {
+            this.readTimeout = readTimeout;
+            return this;
+        }
+
+        // 设置写入超时时间
+        public Builder writeTimeout(Duration writeTimeout) {
+            this.writeTimeout = writeTimeout;
+            return this;
+        }
+
+        // 设置最大空闲连接数
+        public Builder maxIdleConnections(Integer maxIdleConnections) {
+            this.maxIdleConnections = maxIdleConnections;
+            return this;
+        }
+
+        // 设置空闲连接存活时间
+        public Builder keepAliveDuration(Duration keepAliveDuration) {
+            this.keepAliveDuration = keepAliveDuration;
+            return this;
+        }
+
+        // 构建 BaiJiClient 实例
+        public BaiJiClient build() {
+            return new BaiJiClient(this);
+        }
     }
 }
