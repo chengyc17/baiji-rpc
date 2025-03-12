@@ -1,9 +1,12 @@
 package com.baiji.client;
 
 
-import okhttp3.ConnectionPool;
-import okhttp3.OkHttpClient;
+import com.baiji.common.util.DateUtils;
+import com.baiji.common.util.JsonUtils;
+import com.fasterxml.jackson.core.type.TypeReference;
+import okhttp3.*;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
@@ -20,6 +23,13 @@ public class BaiJiClient {
     private ConnectionPool connectionPool;
     private OkHttpClient client;
 
+    //以下均为要向下传递的参数
+    //Meta-info/app.propertiey中的appid=xxx;
+    private String targetAppid = String.valueOf(123);
+    private String ip = "";
+    private String idc = "";
+
+    MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     private BaiJiClient(Builder builder) {
         this.connectTimeout = builder.connectTimeout == null ? DEFAULT_TIMEOUT : builder.connectTimeout;
@@ -38,8 +48,30 @@ public class BaiJiClient {
                 .build();
     }
 
-    public <Res, Req> Res doInvoke(Integer appid, String methodName, Req request) {
-        client.newCall()
+    public <Res extends BaseRes, Req extends AuthInfo> Res doInvoke(Integer appid, String methodName, Req request) {
+        RequestBody requestBody = RequestBody.create(JSON, JsonUtils.serialize(request));
+        String url = String.format("%s/api/%s", appid, methodName);
+        Request req = new Request.Builder()
+                .url(url)
+                .addHeader("X-appid", targetAppid)
+                .addHeader("X-ip", ip)
+                .addHeader("X-idc", idc)
+                .post(requestBody)
+                .build();
+        try (Response response = client.newCall(req).execute()) {
+            Res res;
+            if (response.isSuccessful() && response.body() != null) {
+                String responseBody = response.body().string();
+                res = JsonUtils.deserialize(responseBody, new TypeReference<Res>() {
+                });
+                res.setInvokeResult(new InvokeResult(DateUtils.getCurrentTimeFormatted(), response.code(), ""));
+                return res;
+            }
+            return
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
