@@ -1,6 +1,5 @@
 package com.baiji.client;
 
-
 import com.baiji.common.util.DateUtils;
 import com.baiji.common.util.JsonUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -29,7 +28,11 @@ public class BaiJiClient {
     private String ip = "";
     private String idc = "";
 
-    MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    private MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     private BaiJiClient(Builder builder) {
         this.connectTimeout = builder.connectTimeout == null ? DEFAULT_TIMEOUT : builder.connectTimeout;
@@ -48,7 +51,7 @@ public class BaiJiClient {
                 .build();
     }
 
-    public <Res extends BaseRes, Req extends AuthInfo> Res doInvoke(Integer appid, String methodName, Req request) {
+    public <Res extends BaseRes, Req extends AuthInfo> Res doInvoke(Integer appid, String methodName, Req request) throws IOException {
         RequestBody requestBody = RequestBody.create(JSON, JsonUtils.serialize(request));
         String url = String.format("%s/api/%s", appid, methodName);
         Request req = new Request.Builder()
@@ -67,32 +70,8 @@ public class BaiJiClient {
                 res.setInvokeResult(new InvokeResult(DateUtils.getCurrentTimeFormatted(), response.code(), ""));
                 return res;
             }
-            return
-
-        } catch (IOException e) {
-            e.printStackTrace();
+            return null;
         }
-
-    }
-
-    public Duration getConnectTimeout() {
-        return connectTimeout;
-    }
-
-    public Duration getReadTimeout() {
-        return readTimeout;
-    }
-
-    public Duration getWriteTimeout() {
-        return writeTimeout;
-    }
-
-    public Integer getMaxIdleConnections() {
-        return maxIdleConnections;
-    }
-
-    public Duration getKeepAliveDuration() {
-        return keepAliveDuration;
     }
 
     public static class Builder {

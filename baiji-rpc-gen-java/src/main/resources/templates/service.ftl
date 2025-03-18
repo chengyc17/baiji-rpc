@@ -1,5 +1,4 @@
 <#setting number_format="0">
-
 <#function addQuotes text>
     <#return '"' + text + '"'>
 </#function>
@@ -8,79 +7,91 @@ package ${packageName};
 
 import com.baiji.client.BaiJiClient;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.time.Duration;
 
 public class ${serviceName}Client {
+    private static BaiJiClient client;
 
-    public static ${serviceName}Builder newBuilder() {
+    public static ${serviceName}Builder builder() {
         return new ${serviceName}Builder();
     }
 
-    private static Integer connectTimeout = 1000;
-    private static Integer requestTimeout = 1000;
-    private static ThreadPoolExecutor threadPoolExecutor;
-    private static BaiJiClient client;
-
     private ${serviceName}Client(${serviceName}Builder builder) {
-        if (builder.connectTimeout != null) {
-            connectTimeout = builder.connectTimeout;
+        BaiJiClient.Builder baijiBuilder = BaiJiClient.builder();
+        if (builder.getConnectTimeout() != null) {
+            baijiBuilder.connectTimeout(builder.getConnectTimeout());
         }
-        if (builder.requestTimeout != null) {
-            requestTimeout=builder.requestTimeout;
+        if (builder.getReadTimeout() != null) {
+            baijiBuilder.readTimeout(builder.getReadTimeout());
         }
-        if (builder.threadPoolExecutor != null) {
-            threadPoolExecutor = builder.threadPoolExecutor;
+        if (builder.getWriteTimeout() != null) {
+            baijiBuilder.writeTimeout(builder.getWriteTimeout());
         }
-        client = BaiJiClient.getInstance(connectTimeout);
+        if (builder.getKeepAliveDuration() != null) {
+            baijiBuilder.keepAliveDuration(builder.getKeepAliveDuration());
+        }
+        if (builder.getMaxIdleConnections() != null) {
+            baijiBuilder.maxIdleConnections(builder.getMaxIdleConnections());
+        }
+        client = baijiBuilder.build();
     }
 
     static ${serviceName}Client create(${serviceName}Builder builder) {
         return new ${serviceName}Client(builder);
     }
 
-<#list methods as method>
-    public ${method.resType} ${method.methodName}(${method.reqType} request)  throws Exception {
-        client.doInvoke(${appid},${addQuotes(method.methodName)}),request,requestTimeout);
+    <#list methods as method>
+    public ${method.resType} ${method.methodName}(${method.reqType} request) throws Exception {
+        return client.doInvoke(${appid}, ${addQuotes(method.methodName)}, request);
     }
-
-    public ${method.resType} ${method.methodName}(${method.reqType} request, int requestTimeout)  throws Exception {
-        client.doInvoke(${appid},${addQuotes(method.methodName)},request,requestTimeout);
-    }
-
-    public CompletableFuture<${method.resType}> ${method.methodName}Async(${method.reqType} request)  throws Exception {
-        return threadPoolExecutor == null ?
-            CompletableFuture.supplyAsync(() -> client.doInvoke(${appid},${addQuotes(method.methodName)},request,requestTimeout)) :
-            CompletableFuture.supplyAsync(() -> client.doInvoke(${appid},${addQuotes(method.methodName)},request,requestTimeout), threadPoolExecutor);
-    }
-
-    public CompletableFuture<${method.resType}> ${method.methodName}Async(${method.reqType} request, ThreadPoolExecutor threadPoolExecutor)  throws Exception {
-        return threadPoolExecutor == null ?
-            CompletableFuture.supplyAsync(() -> client.doInvoke(${appid},${addQuotes(method.methodName)},request,requestTimeout)) :
-            CompletableFuture.supplyAsync(() -> client.doInvoke(${appid},${addQuotes(method.methodName)},request,requestTimeout), threadPoolExecutor);
-    }
-</#list>
+    </#list>
 }
 
 interface Builder {
-    Builder connectTimeout(Integer millionSec);
+    Builder connectTimeout(Duration connectTimeout);
 
-    Builder requestTimeout(Integer millionSec);
+    Builder readTimeout(Duration readTimeout);
 
-    Builder threadPoolExecutor(ThreadPoolExecutor threadPoolExecutor);
+    Builder writeTimeout(Duration writeTimeout);
+
+    Builder maxIdleConnections(Integer maxIdleConnections);
+
+    Builder keepAliveDuration(Duration keepAliveDuration);
 
     ${serviceName}Client build();
 }
 
 class ${serviceName}Builder implements Builder {
 
-    Integer connectTimeout;
-    Integer requestTimeout;
-    ThreadPoolExecutor threadPoolExecutor;
+    private  Duration connectTimeout;
+    private  Duration readTimeout;
+    private  Duration writeTimeout;
+    private  Integer maxIdleConnections;
+    private  Duration keepAliveDuration;
+
+    public Duration getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public Duration getReadTimeout() {
+        return readTimeout;
+    }
+
+    public Duration getWriteTimeout() {
+        return writeTimeout;
+    }
+
+    public Integer getMaxIdleConnections() {
+        return maxIdleConnections;
+    }
+
+    public Duration getKeepAliveDuration() {
+        return keepAliveDuration;
+    }
 
     @Override
-    public Builder connectTimeout(Integer millionSec) {
-        if (millionSec <= 0) {
+    public Builder connectTimeout(Duration connectTimeout) {
+        if (connectTimeout == null || connectTimeout.isNegative()) {
             throw new IllegalArgumentException("connectTimeout must greater than zero");
         }
         this.connectTimeout = connectTimeout;
@@ -88,20 +99,38 @@ class ${serviceName}Builder implements Builder {
     }
 
     @Override
-    public Builder requestTimeout(Integer millionSec) {
-        if (millionSec <= 0) {
-            throw new IllegalArgumentException("requestTimeout must greater than zero");
+    public Builder readTimeout(Duration readTimeout) {
+        if (readTimeout == null || readTimeout.isNegative()) {
+            throw new IllegalArgumentException("connectTimeout must greater than zero");
         }
-        this.requestTimeout = connectTimeout;
+        this.readTimeout = readTimeout;
         return this;
     }
 
     @Override
-    public Builder threadPoolExecutor(ThreadPoolExecutor threadPoolExecutor) {
-        if (threadPoolExecutor == null) {
-            throw new IllegalArgumentException("threadPoolExecutor can not be null");
+    public Builder writeTimeout(Duration writeTimeout) {
+        if (writeTimeout == null || writeTimeout.isNegative()) {
+            throw new IllegalArgumentException("connectTimeout must greater than zero");
         }
-        this.threadPoolExecutor = threadPoolExecutor;
+        this.writeTimeout = writeTimeout;
+        return this;
+    }
+
+    @Override
+    public Builder maxIdleConnections(Integer maxIdleConnections) {
+        if (maxIdleConnections == null || maxIdleConnections <= 0) {
+            throw new IllegalArgumentException("connectTimeout must greater than zero");
+        }
+        this.maxIdleConnections = maxIdleConnections;
+        return this;
+    }
+
+    @Override
+    public Builder keepAliveDuration(Duration keepAliveDuration) {
+        if (keepAliveDuration == null || keepAliveDuration.isNegative()) {
+            throw new IllegalArgumentException("connectTimeout must greater than zero");
+        }
+        this.keepAliveDuration = keepAliveDuration;
         return this;
     }
 
