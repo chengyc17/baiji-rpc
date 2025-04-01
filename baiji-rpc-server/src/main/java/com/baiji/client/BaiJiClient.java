@@ -1,6 +1,6 @@
 package com.baiji.client;
 
-import com.baiji.common.util.DateUtils;
+import com.baiji.common.AuthInfo;
 import com.baiji.common.util.JsonUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import okhttp3.*;
@@ -51,7 +51,7 @@ public class BaiJiClient {
                 .build();
     }
 
-    public <Res extends BaseRes, Req extends AuthInfo> Res doInvoke(Integer appid, String methodName, Req request) throws IOException {
+    public <Res, Req extends AuthInfo> Res doInvoke(Integer appid, String methodName, Req request) throws IOException {
         RequestBody requestBody = RequestBody.create(JSON, JsonUtils.serialize(request));
         String url = String.format("%s/api/%s", appid, methodName);
         Request req = new Request.Builder()
@@ -67,7 +67,6 @@ public class BaiJiClient {
                 String responseBody = response.body().string();
                 res = JsonUtils.deserialize(responseBody, new TypeReference<Res>() {
                 });
-                res.setInvokeResult(new InvokeResult(DateUtils.getCurrentTimeFormatted(), response.code(), ""));
                 return res;
             }
             return null;

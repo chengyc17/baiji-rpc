@@ -16,4 +16,37 @@
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.baiji</groupId>
+            <artifactId>baiji-rpc-common</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>3.14.9</version>
+        </dependency>
+        <dependency>
+            <groupId>com.baiji</groupId>
+            <artifactId>baiji-rpc-annotation</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <scope>provided</scope>
+            <!--            <version>5.3.23</version>-->
+        </dependency>
+        <dependency>
+            <groupId>com.baiji</groupId>
+            <artifactId>baiji-rpc-spi</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+
 </project>

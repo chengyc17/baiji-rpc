@@ -1,7 +1,9 @@
 <#setting number_format="0">
 package ${packageName};
 
-public interface ${serviceName} {
+import com.baiji.common.BaijiService;
+
+public interface ${serviceName} implements BaijiService {
 
     <#list serviceMethods as method>
         /**

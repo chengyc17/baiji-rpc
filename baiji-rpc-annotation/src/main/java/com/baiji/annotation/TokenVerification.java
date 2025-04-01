@@ -1,0 +1,12 @@
+package com.baiji.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface TokenVerification {
+    VerifyType value() default VerifyType.On_Demand;
+}

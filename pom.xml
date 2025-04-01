@@ -16,6 +16,7 @@
         <module>baiji-rpc-gen</module>
         <module>baiji-rpc-gen-java</module>
         <module>baiji-rpc-spi</module>
+        <module>baiji-rpc-annotation</module>
     </modules>
 
     <properties>
