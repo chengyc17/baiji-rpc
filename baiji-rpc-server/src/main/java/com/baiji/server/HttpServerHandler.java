@@ -10,39 +10,94 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
 
 @ChannelHandler.Sharable
 public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
-    private Pattern pattern = java.util.regex.Pattern.compile("/api/([^/]+)");
     private Map<String, MethodWrapper> methodMap;
     private Verification verification;
+    private Map<String, String> requestJson = new HashMap<>();
+
+    private static final String API = "api";
+    private static final String JSON = "json";
+    private static final String ALL = "all";
+    private static final String CHECK_HEALTH = "checkHealth";
 
     public HttpServerHandler(Map<String, MethodWrapper> methodMap) {
         initVerification();
         this.methodMap = methodMap;
+        initRequestJson();
+    }
+
+    private void initRequestJson() {
+        for (Map.Entry<String, MethodWrapper> entry : methodMap.entrySet()) {
+            Class<? extends AuthInfo> reqClass = Optional.ofNullable(entry).map(x -> x.getValue()).map(x -> x.getReqCls()).orElse(null);
+            if (reqClass == null) {
+                throw new IllegalArgumentException("request class can not be null");
+            }
+            requestJson.put(entry.getKey(), JsonUtils.generateDefaultJson(reqClass));
+        }
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
-        // 获取请求的 URI
-        String uri = request.uri();
-        // 解析 methodName
-        String methodName = extractMethodName(uri);
-        String res = doInvoke(methodName, request.content().toString(CharsetUtil.UTF_8));
+        try {
+            setInvokerInfo(request);
+            String uri = request.uri();
+            List<String> typeAndMethodName = splitUri(uri);
+            String type = typeAndMethodName.get(0);
+            String methodName = typeAndMethodName.get(1);
+            if (StringUtils.equalsIgnoreCase(type, API) && methodMap.containsKey(methodName)) {
+                doResponse(ctx, request, doInvoke(methodName, request.content().toString(CharsetUtil.UTF_8)));
+                return;
+            }
+            if (StringUtils.equalsIgnoreCase(type, API) && StringUtils.equalsIgnoreCase(methodName, CHECK_HEALTH)) {
+                doResponse(ctx, request, StringUtils.Empty);
+                return;
+            }
+            if (StringUtils.equalsIgnoreCase(type, JSON) && methodMap.containsKey(methodName)) {
+                doResponse(ctx, request, requestJson.get(methodName));
+                return;
+            }
+            if (StringUtils.equalsIgnoreCase(type, JSON) && StringUtils.equalsIgnoreCase(methodName, ALL)) {
+                doResponse(ctx, request, JsonUtils.serialize(requestJson.keySet()));
+                return;
+            }
+        } finally {
+            InvokerInfo.removeAll();
+        }
+    }
+
+    private void setInvokerInfo(FullHttpRequest request) {
+        HttpHeaders headers = request.headers();
+
+        // TODO: 2025/4/8 补全这两个key
+        String remoteIP = headers.get("");
+        String remoteAppid = headers.get("");
+        String from = headers.get("");
+
+        InvokerInfo.setInvokerIp(remoteIP);
+        InvokerInfo.setInvokerAppid(remoteAppid);
+        InvokerInfo.setInvokerFrom(from);
+    }
+
+    private List<String> splitUri(String uri) {
+        List<String> res = new ArrayList<>();
+        for (String s : uri.split("/+")) {
+            if (s.length() == 0) {
+                continue;
+            }
+            res.add(s);
+        }
+        return res;
+    }
+
+    private void doResponse(ChannelHandlerContext ctx, FullHttpRequest request, String res) {
         FullHttpResponse response = new DefaultFullHttpResponse(
                 request.protocolVersion(),
                 HttpResponseStatus.OK,
@@ -50,7 +105,6 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
         );
         response.headers().set("Content-Type", "application/json; charset=UTF-8");
         response.headers().set("Content-Length", response.content().readableBytes());
-
         // 发送响应
         ctx.writeAndFlush(response);
     }
@@ -60,7 +114,6 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
         Method method = methodWrapper.getMethod();
         Object target = methodWrapper.getTarget();
         Class<? extends AuthInfo> reqCls = methodWrapper.getReqCls();
-//        Class<?> resCls = methodWrapper.getResCls();
         VerifyType verifyType = methodWrapper.getVerifyType();
         AuthInfo authInfo = JsonUtils.deserialize(reqStr, reqCls);
         tokenVerify(authInfo, verifyType);
@@ -83,7 +136,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
         verification = verificationList.get(0);
     }
 
-    private <Res, Req extends AuthInfo> void tokenVerify(Req req, VerifyType verifyType) throws Exception {
+    private <Req extends AuthInfo> void tokenVerify(Req req, VerifyType verifyType) throws Exception {
         String token = req.getToken();
         if (verifyType == VerifyType.No_Need) {
             return;
@@ -101,15 +154,6 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
             }
             verification.verify(req);
         }
-    }
-
-    private String extractMethodName(String uri) {
-        // 假设 URI 格式为 /api/methodName
-        Matcher matcher = pattern.matcher(uri);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return "";
     }
 
     @Override

@@ -12,11 +12,14 @@
     <modules>
         <module>baiji-rpc-common</module>
         <module>baiji-rpc-server</module>
-        <module>baiji-rpc-client</module>
+<!--        <module>baiji-rpc-client</module>-->
         <module>baiji-rpc-gen</module>
         <module>baiji-rpc-gen-java</module>
         <module>baiji-rpc-spi</module>
         <module>baiji-rpc-annotation</module>
+        <module>baiji-rpc-config</module>
+        <module>baiji-rpc-gateway</module>
+        <module>baiji-rpc-canary</module>
     </modules>
 
     <properties>
