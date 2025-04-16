@@ -4,6 +4,7 @@ import com.baiji.annotation.JsonConfig;
 import com.baiji.annotation.PropertiesConfig;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+@Component
 public class ScanConfigAnnotations implements BeanPostProcessor {
 
     private Map<String, Set<FieldWrapper>> jsonConfigMap = new HashMap<>();
