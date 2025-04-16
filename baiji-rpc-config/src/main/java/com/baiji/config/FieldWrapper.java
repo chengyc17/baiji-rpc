@@ -4,11 +4,11 @@ import java.lang.reflect.Field;
 
 public class FieldWrapper<T> {
     private Field field;
-    private T obj;
+    private T bean;
 
-    public FieldWrapper(Field field, T obj) {
+    public FieldWrapper(Field field, T bean) {
         this.field = field;
-        this.obj = obj;
+        this.bean = bean;
     }
 
     public FieldWrapper() {
@@ -22,11 +22,11 @@ public class FieldWrapper<T> {
         this.field = field;
     }
 
-    public T getObj() {
-        return obj;
+    public T getBean() {
+        return bean;
     }
 
-    public void setObj(T obj) {
-        this.obj = obj;
+    public void setBean(T bean) {
+        this.bean = bean;
     }
 }

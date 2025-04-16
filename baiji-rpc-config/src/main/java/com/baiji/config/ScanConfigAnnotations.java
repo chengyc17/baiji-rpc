@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class ScanAnnotations implements BeanPostProcessor {
+public class ScanConfigAnnotations implements BeanPostProcessor {
 
     private Map<String, Set<FieldWrapper>> jsonConfigMap = new HashMap<>();
     private Map<String, Set<FieldWrapper>> propertiesConfigMap = new HashMap<>();

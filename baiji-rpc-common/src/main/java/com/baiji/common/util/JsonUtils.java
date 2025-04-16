@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
@@ -39,10 +41,27 @@ public class JsonUtils {
         }
     }
 
+    public static <T> T deserialize(File file, Class<T> cls) {
+        try {
+            return objectMapper.readValue(file, cls);
+        } catch (IOException e) {
+            throw new RuntimeException("deserialize error", e);
+        }
+    }
+
+
     public static <T> T deserialize(String json, TypeReference<T> tTypeReference) {
         try {
             return objectMapper.readValue(json, tTypeReference);
         } catch (JsonProcessingException e) {
+            throw new RuntimeException("deserialize error", e);
+        }
+    }
+
+    public static <T> T deserialize(File json, TypeReference<T> tTypeReference) {
+        try {
+            return objectMapper.readValue(json, tTypeReference);
+        } catch (IOException e) {
             throw new RuntimeException("deserialize error", e);
         }
     }
