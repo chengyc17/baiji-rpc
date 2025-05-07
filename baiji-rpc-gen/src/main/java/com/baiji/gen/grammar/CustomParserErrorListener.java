@@ -1,4 +1,4 @@
-package com.baiji.grammar;
+package com.baiji.gen.grammar;
 
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;

@@ -1,4 +1,4 @@
-package com.baiji.antlr;// Generated from BaijiGrammar.g4 by ANTLR 4.13.1
+package com.baiji.gen.antlr;// Generated from BaijiGrammar.g4 by ANTLR 4.13.1
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**

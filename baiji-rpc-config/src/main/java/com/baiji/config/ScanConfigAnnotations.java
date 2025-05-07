@@ -7,16 +7,16 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class ScanConfigAnnotations implements BeanPostProcessor {
 
-    private Map<String, Set<FieldWrapper>> jsonConfigMap = new HashMap<>();
-    private Map<String, Set<FieldWrapper>> propertiesConfigMap = new HashMap<>();
+    private Map<String, Set<FieldWrapper>> jsonConfigMap = new ConcurrentHashMap<>();
+    private Map<String, Set<FieldWrapper>> propertiesConfigMap = new ConcurrentHashMap<>();
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {

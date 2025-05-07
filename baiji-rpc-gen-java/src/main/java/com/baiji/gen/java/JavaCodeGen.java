@@ -59,7 +59,7 @@ public class JavaCodeGen implements LangHandler {
     }
 
     @Override
-    public void deploy(String generateCodeLocation, DeployInfo deployInfo) throws Exception {
+    public void deploy( DeployInfo deployInfo) throws Exception {
         File pom = new File(BASE_PATH + File.separator + "generate_source/pom.xml");
         generatePomFile(deployInfo, pom);
         deployToMavenRepository(pom);
@@ -139,6 +139,7 @@ public class JavaCodeGen implements LangHandler {
                 dataModel.put("packageName", definition.getPackageName());
                 dataModel.put("className", cls.getClsName());
                 dataModel.put("fields", parseDtype(cls.getFieldInfos()));
+                dataModel.put("isReqCls", isReqCls(cls.getClsName(), definition.getServiceInfo().getMethodDefinitionList()));
                 //开始生成代码
                 String fileName = String.format("%s.java", cls.getClsName());
                 File outputFile = new File(targetRootLocation, fileName);
@@ -152,6 +153,15 @@ public class JavaCodeGen implements LangHandler {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private boolean isReqCls(String clsName, List<MethodDefinition> methodDefinitionList) {
+        for (MethodDefinition methodDefinition : methodDefinitionList) {
+            if (clsName.equalsIgnoreCase(methodDefinition.getReqType())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private List<FieldInfoDefinition> parseDtype(List<FieldInfoDefinition> fieldInfoDefinitionList) {

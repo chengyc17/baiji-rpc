@@ -1,21 +1,23 @@
-package com.baiji.grammar;
+package com.baiji.gen.grammar;
 
-import com.baiji.antlr.BaijiGrammarLexer;
-import com.baiji.antlr.BaijiGrammarParser;
 import com.baiji.common.grammar.definition.BaijiGrammarDefinition;
 import com.baiji.common.util.StringUtils;
+import com.baiji.gen.antlr.BaijiGrammarLexer;
+import com.baiji.gen.antlr.BaijiGrammarParser;
 import com.baiji.spi.DeployInfo;
 import com.baiji.spi.LangHandler;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ServiceLoader;
 
-public class GrammarParser {
 
+@Component
+public class GrammarParser {
 
     public BaijiGrammarDefinition parser(String content) throws IOException {
 //        String input = CharStreams.fromFileName(path).toString();
@@ -32,7 +34,7 @@ public class GrammarParser {
         return customBaijiBrammarListener.getGrammarDefinition();
     }
 
-    public void codeGenerate(BaijiGrammarDefinition definition, String targetLang, String generateCodeLocation, DeployInfo deployInfo) throws Exception {
+    public void codeGenerate(BaijiGrammarDefinition definition, String targetLang, DeployInfo deployInfo) throws Exception {
         ServiceLoader<LangHandler> langHandlers = ServiceLoader.load(LangHandler.class);
         boolean support = false;
         for (LangHandler langHandler : langHandlers) {
@@ -41,15 +43,15 @@ public class GrammarParser {
             }
             support = true;
             langHandler.generate(definition);
-            langHandler.deploy(generateCodeLocation, deployInfo);
+            langHandler.deploy(deployInfo);
         }
         if (!support) {
             throw new IllegalArgumentException("不支持的语言类型");
         }
     }
 
-    public void codeGenerate(String content, String targetLang, String generateCodeLocation, DeployInfo deployInfo) throws Exception {
+    public void codeGenerate(String content, String targetLang, DeployInfo deployInfo) throws Exception {
         BaijiGrammarDefinition parser = parser(content);
-        codeGenerate(parser, targetLang, generateCodeLocation, deployInfo);
+        codeGenerate(parser, targetLang, deployInfo);
     }
 }

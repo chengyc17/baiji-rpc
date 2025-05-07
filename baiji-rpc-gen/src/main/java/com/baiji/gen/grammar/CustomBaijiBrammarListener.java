@@ -1,7 +1,8 @@
-package com.baiji.grammar;
+package com.baiji.gen.grammar;
 
-import com.baiji.antlr.BaijiGrammarBaseListener;
-import com.baiji.antlr.BaijiGrammarParser;
+import com.baiji.gen.antlr.BaijiGrammarBaseListener;
+import com.baiji.gen.antlr.BaijiGrammarParser;
+import com.baiji.common.ForbiddenMethodName;
 import com.baiji.common.dtype.BaijiIDLDataType;
 import com.baiji.common.grammar.definition.*;
 import com.baiji.common.util.StringUtils;
@@ -67,12 +68,15 @@ public class CustomBaijiBrammarListener extends BaijiGrammarBaseListener {
     @Override
     public void enterServiceDeclaration(BaijiGrammarParser.ServiceDeclarationContext ctx) {
         serviceInfo.setServiceName(ctx.IDENTIFIER().getText());
-
         List<MethodDefinition> methods = new ArrayList<>();
         for (BaijiGrammarParser.MethodDeclarationContext methodCtx : ctx.methodDeclaration()) {
             MethodDefinition methodInfo = new MethodDefinition();
             methodInfo.setResType(methodCtx.type(0).getText());
-            methodInfo.setMethodName(methodCtx.IDENTIFIER(0).getText());
+            String methodName = methodCtx.IDENTIFIER(0).getText();
+            if (ForbiddenMethodName.inForbidNames(methodName)) {
+                throw new RuntimeException("\"checkHealth\" and \"all\" are reserved keywords, do not use");
+            }
+            methodInfo.setMethodName(methodName);
             methodInfo.setReqType(methodCtx.type(1).getText());
             methodInfo.setReqName(methodCtx.IDENTIFIER(1).getText());
             methods.add(methodInfo);

@@ -4,11 +4,12 @@ package ${packageName};
 import java.util.Map;
 import java.util.List;
 import java.util.Objects;
+${isReqCls? then("import com.baiji.common.AuthInfo;", "")}
 
 /**
 * ${className} 实体类
 */
-public class ${className} {
+public class ${className} ${isReqCls? then("extends AuthInfo", "")}{
     <#list fields as field>
         private ${field.dataType} ${field.fieldName};
     </#list>

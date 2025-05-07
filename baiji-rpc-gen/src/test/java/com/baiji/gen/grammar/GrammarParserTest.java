@@ -1,9 +1,7 @@
-package com.baiji.grammar;
+package com.baiji.gen.grammar;
 
 import com.baiji.spi.DeployInfo;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
 
 public class GrammarParserTest {
 
@@ -80,7 +78,7 @@ public class GrammarParserTest {
         deployInfo.setArtifactId("myproj");
         deployInfo.setGroupId("com.abc.efg");
         deployInfo.setVersion("1.2");
-        parser.codeGenerate(content, "Java", System.getProperty("user.dir"), deployInfo);
+        parser.codeGenerate(content, "Java", deployInfo);
     }
 
 }
