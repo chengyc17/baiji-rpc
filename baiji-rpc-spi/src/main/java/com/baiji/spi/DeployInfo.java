@@ -2,21 +2,25 @@ package com.baiji.spi;
 
 import com.baiji.common.util.StringUtils;
 
+import java.util.Map;
+
 public class DeployInfo {
     private static final String SNAPSHOT_SUBFIX = "SNAPSHOTS";
     private String groupId;
     private String artifactId;
     private String version;
     private boolean isSnapshot;
+    private Map<String,String> other;
 
     public DeployInfo() {
     }
 
-    public DeployInfo(String groupId, String artifactId, String version, boolean isSnapshot) {
+    public DeployInfo(String groupId, String artifactId, String version, boolean isSnapshot,Map<String,String> other) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = snapshotVersion(version, isSnapshot);
         this.isSnapshot = isSnapshot;
+        this.other = other;
     }
 
     private String snapshotVersion(String version, boolean isSnapshot) {
@@ -24,6 +28,14 @@ public class DeployInfo {
             return String.format("%s-%s", version, SNAPSHOT_SUBFIX);
         }
         return version;
+    }
+
+    public Map<String, String> getOther() {
+        return other;
+    }
+
+    public void setOther(Map<String, String> other) {
+        this.other = other;
     }
 
     public String getGroupId() {
